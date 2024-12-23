@@ -6,7 +6,7 @@ from textwrap import dedent
 
 import tweepy
 import re
-from groq import Groq
+from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
 from crewai import  Crew
 from crewai.process import Process
 from tasks import ViralContentCreationTasks
@@ -20,11 +20,13 @@ print('-------------------------------')
 niche = input("What is your niche?\n")
 
 model = os.getenv('MODEL')
+token = os.getenv('HUGGING_FACE_API')
 if not model:
 	raise ValueError("MODEL environment variable is not set.")
-groqClient = Groq(
-	api_key=os.getenv("GROQ_API_KEY"),
-)
+# Initialize Hugging Face model and tokenizer
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=token)
+tweet_generator = pipeline("text-generation", model=model, tokenizer=tokenizer, use_auth_token=token)
 
 def get_tweets_from_llm(content):
     chat_completion = groqClient.chat.completions.create(

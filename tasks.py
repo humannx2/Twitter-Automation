@@ -75,12 +75,12 @@ class ViralContentCreationTasks:
 			agent=agent
 		)
 
-	# def publish_twitter_posts(self, agent, tweets):
-	# 	return Task(
-	# 		description=dedent("""\
-	# 			Print all the tweets created by previous task in the logs.
-	# 			Publish all the tweets to Twitter.
-	# 			"""),
-	# 		expected_output="Posting status of all the tweets.",
-	# 		agent=agent
-	# 	)
+	def publish_twitter_posts(self, agent, tweets):
+		return Task(
+			description=dedent("""\
+				Print all the tweets created by previous task in the logs.
+				Publish all the tweets to Twitter.
+				"""),
+			expected_output="Posting status of all the tweets.",
+			agent=agent
+		)

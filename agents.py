@@ -4,19 +4,22 @@ from crewai import Agent
 from tools.browser_tools import BrowserTools
 from tools.search_tools import SearchTools
 from tools.trends_tools import TrendsTools
-from chat_groq_manager import ChatGroqManager
-
+from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
 from dotenv import load_dotenv
 load_dotenv()
 
 
 class ViralContentCreators:
 	def __init__(self):
-		model = os.getenv('MODEL')
-		if not model:
-			raise ValueError()
-		chat_groq_manager = ChatGroqManager(model)
-		self.llm = chat_groq_manager.create_llm()
+		model_name = os.getenv('MODEL')
+		token = os.getenv('HUGGING_FACE_API')
+		if not model_name:
+			raise ValueError("Environment variable 'MODEL' is not set.")
+
+		# Load the Hugging Face model and tokenizer
+		tokenizer = AutoTokenizer.from_pretrained(model_name)
+		model = AutoModelForCausalLM.from_pretrained(model_name, use_auth_token=token)
+		self.llm = pipeline("text-generation", model=model, tokenizer=tokenizer, use_auth_token=token)
 
 	def trending_topic_researcher_agent(self):
 		return Agent(
